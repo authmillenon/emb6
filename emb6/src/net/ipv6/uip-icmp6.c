@@ -114,7 +114,7 @@ uip_icmp6_input(uint8_t type, uint8_t icode)
 void
 uip_icmp6_register_input_handler(uip_icmp6_input_handler_t *handler)
 {
-  list_add(input_handler_list, handler);
+  emb6_list_add(input_handler_list, handler);
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -393,14 +393,14 @@ uip_icmp6_echo_reply_callback_add(struct uip_icmp6_echo_reply_notification *n,
 {
     if(n != NULL && c != NULL) {
         n->callback = c;
-        list_add(echo_reply_callback_list, n);
+        emb6_list_add(echo_reply_callback_list, n);
     }
 }
 /*---------------------------------------------------------------------------*/
 void
 uip_icmp6_echo_reply_callback_rm(struct uip_icmp6_echo_reply_notification *n)
 {
-    list_remove(echo_reply_callback_list, n);
+    emb6_list_remove(echo_reply_callback_list, n);
 }
 /*---------------------------------------------------------------------------*/
 UIP_ICMP6_HANDLER(echo_request_handler, ICMP6_ECHO_REQUEST,

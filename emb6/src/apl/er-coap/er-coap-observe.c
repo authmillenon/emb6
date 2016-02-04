@@ -80,7 +80,7 @@ coap_add_observer(uip_ipaddr_t *addr, uint16_t port, const uint8_t *token,
     PRINTF("Adding observer (%u/%u) for /%s [0x%02X%02X]\n",
            list_length(observers_list) + 1, COAP_MAX_OBSERVERS,
            o->url, o->token[0], o->token[1]);
-    list_add(observers_list, o);
+    emb6_list_add(observers_list, o);
   }
 
   return o;
@@ -95,7 +95,7 @@ coap_remove_observer(coap_observer_t *o)
          o->token[1]);
 
   memb_free(&observers_memb, o);
-  list_remove(observers_list, o);
+  emb6_list_remove(observers_list, o);
 }
 /*---------------------------------------------------------------------------*/
 int

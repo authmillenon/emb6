@@ -45,7 +45,7 @@
 
 
 #include "mmem.h"
-#include "clist.h"
+#include "emb6_clist.h"
 //#include "lib_conf.h"
 #include <string.h>
 
@@ -89,7 +89,7 @@ mmem_alloc(struct mmem *m, unsigned int size)
 
   /* We had enough memory so we add this memory block to the end of
      the list of allocated memory blocks. */
-  list_add(mmemlist, m);
+  emb6_list_add(mmemlist, m);
 
   /* Set up the pointer so that it points to the first available byte
      in the memory block. */
@@ -136,7 +136,7 @@ mmem_free(struct mmem *m)
   avail_memory += m->size;
 
   /* Remove the memory block from the list. */
-  list_remove(mmemlist, m);
+  emb6_list_remove(mmemlist, m);
 }
 /*---------------------------------------------------------------------------*/
 /**

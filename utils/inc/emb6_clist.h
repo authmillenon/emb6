@@ -30,7 +30,7 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: clist.h,v 1.5 2010/09/13 13:31:00 adamdunkels Exp $
+ * $Id: emb6_clist.h,v 1.5 2010/09/13 13:31:00 adamdunkels Exp $
  */
 
 /**
@@ -52,9 +52,9 @@
  * the name of the list that later is used with all list functions.
  *
  * Lists can be manipulated by inserting or removing elements from
- * either sides of the list (list_push(), list_add(), list_pop(),
+ * either sides of the list (list_push(), emb6_list_add(), list_pop(),
  * list_chop()). A specified element can also be removed from inside a
- * list with list_remove(). The head and tail of a list can be
+ * list with emb6_list_remove(). The head and tail of a list can be
  * extracted using list_head() and list_tail(), respectively.
  *
  * @{
@@ -145,8 +145,8 @@ void   list_push(list_t list, void *item);
 
 void * list_chop(list_t list);
 
-void   list_add(list_t list, void *item);
-void   list_remove(list_t list, void *item);
+void   emb6_list_add(list_t list, void *item);
+void   emb6_list_remove(list_t list, void *item);
 
 int    list_length(list_t list);
 

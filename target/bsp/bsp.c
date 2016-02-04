@@ -63,7 +63,7 @@
 #include "board_conf.h"
 
 #include "etimer.h"
-#include "random.h"
+#include "emb6_random.h"
 #include "evproc.h"
 /*==============================================================================
                                      MACROS

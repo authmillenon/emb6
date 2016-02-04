@@ -104,7 +104,7 @@ rest_activate_resource(resource_t *resource, char *path)
 {
   resource->url = path;
   struct periodic_resource_s * periodic = resource->un_handler.periodic;
-  list_add(restful_services, resource);
+  emb6_list_add(restful_services, resource);
 
   PRINTF("Activating: %s\n\r", resource->url);
 
@@ -112,7 +112,7 @@ rest_activate_resource(resource_t *resource, char *path)
   if((resource->flags & IS_PERIODIC) && periodic->periodic_handler
      && periodic->period) {
     PRINTF("Periodic resource: %p (%s)\n", periodic,periodic->resource->url);
-    list_add(restful_periodic_services, periodic);
+    emb6_list_add(restful_periodic_services, periodic);
   }
 
   for(periodic_resource =

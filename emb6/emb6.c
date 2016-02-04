@@ -64,7 +64,7 @@
 #include "queuebuf.h"
 #include "linkaddr.h"
 #include "ctimer.h"
-#include "random.h"
+#include "emb6_random.h"
 
 #if NETSTACK_CONF_WITH_IPV6
 #include "uip-ds6.h"

@@ -46,7 +46,7 @@
  *
  */
 
-#include "clist.h"
+#include "emb6_clist.h"
 
 #define NULL 0
 
@@ -141,12 +141,12 @@ list_tail(list_t list)
  *
  */
 void
-list_add(list_t list, void *item)
+emb6_list_add(list_t list, void *item)
 {
   struct list *l;
 
   /* Make sure not to add the same element twice */
-  list_remove(list, item);
+  emb6_list_remove(list, item);
 
   ((struct list *)item)->next = NULL;
   
@@ -168,7 +168,7 @@ list_push(list_t list, void *item)
   /*  struct list *l;*/
 
   /* Make sure not to add the same element twice */
-  list_remove(list, item);
+  emb6_list_remove(list, item);
 
   ((struct list *)item)->next = *list;
   *list = item;
@@ -238,7 +238,7 @@ list_pop(list_t list)
  */
 /*---------------------------------------------------------------------------*/
 void
-list_remove(list_t list, void *item)
+emb6_list_remove(list_t list, void *item)
 {
   struct list *l, *r;
   

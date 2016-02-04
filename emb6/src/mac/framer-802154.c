@@ -45,7 +45,7 @@
 #include "frame802154.h"
 #include "llsec802154.h"
 #include "packetbuf.h"
-#include "random.h"
+#include "emb6_random.h"
 
 
 

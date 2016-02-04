@@ -24,7 +24,7 @@
  */
 /*============================================================================*/
 
-#include "ringbuffer.h"
+#include "emb6_ringbuffer.h"
 /**
  * @file
  * Implementation of ring ac_buf functions.

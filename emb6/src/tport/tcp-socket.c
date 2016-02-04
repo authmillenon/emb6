@@ -31,7 +31,7 @@
 
 #include "emb6.h"
 #include "bsp.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "etimer.h"
 
 #include "tcp-socket.h"
@@ -276,7 +276,7 @@ tcp_socket_register(struct tcp_socket *s, void *ptr,
   s->output_data_maxlen = output_databuf_len;
   s->input_callback = input_callback;
   s->event_callback = event_callback;
-  list_add(socketlist, s);
+  emb6_list_add(socketlist, s);
 
   s->listen_port = 0;
   s->flags = TCP_SOCKET_FLAGS_NONE;
@@ -386,7 +386,7 @@ tcp_socket_unregister(struct tcp_socket *s)
   if(s->c != NULL) {
     tcp_attach(s->c, NULL);
   }
-  list_remove(socketlist, s);
+  emb6_list_remove(socketlist, s);
   return 1;
 }
 /*---------------------------------------------------------------------------*/

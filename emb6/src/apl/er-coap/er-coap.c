@@ -39,7 +39,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "random.h"
+#include "emb6_random.h"
 
 #include "er-coap.h"
 #include "er-coap-transactions.h"

@@ -51,7 +51,7 @@
 #include "roll-tm.h"
 #include "bsp.h"
 #include "ctimer.h"
-#include "random.h"
+#include "emb6_random.h"
 //#include "dev/watchdog.h"
 //#include <string.h>
 

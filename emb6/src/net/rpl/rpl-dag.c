@@ -50,7 +50,7 @@
 #if UIP_CONF_IPV6_MULTICAST
 #include "uip-mcast6.h"
 #endif
-#include "clist.h"
+#include "emb6_clist.h"
 #include "memb.h"
 #include "ctimer.h"
 

@@ -61,7 +61,7 @@
  * \param interval The interval before the timer expires.
  *
  */
-void timer_set(struct timer *t, clock_time_t interval)
+void timer_emb6_set(struct timer *t, clock_time_t interval)
 {
     t->interval = interval;
     t->start = bsp_getTick();
@@ -71,7 +71,7 @@ void timer_set(struct timer *t, clock_time_t interval)
  * Reset the timer with the same interval.
  *
  * This function resets the timer with the same interval that was
- * given to the timer_set() function. The start point of the interval
+ * given to the timer_emb6_set() function. The start point of the interval
  * is the exact time that the timer last expired. Therefore, this
  * function will cause the timer to be stable over time, unlike the
  * timer_restart() function.
@@ -89,7 +89,7 @@ void timer_reset(struct timer *t)
  * Restart the timer from the current point in time
  *
  * This function restarts a timer with the same interval that was
- * given to the timer_set() function. The timer will start at the
+ * given to the timer_emb6_set() function. The timer will start at the
  * current time.
  *
  * \note A periodic timer will drift if this function is used to reset

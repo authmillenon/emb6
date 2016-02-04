@@ -41,7 +41,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "memb.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "nbr-table.h"
 
 /* List of link-layer addresses of the neighbors, used as key in the tables */
@@ -221,7 +221,7 @@ nbr_table_allocate(void)
       /* Empty used map */
       used_map[index_from_key(least_used_key)] = 0;
       /* Remove neighbor from list */
-      list_remove(nbr_table_keys, least_used_key);
+      emb6_list_remove(nbr_table_keys, least_used_key);
       /* Return associated key */
       return least_used_key;
     }
@@ -295,7 +295,7 @@ nbr_table_add_lladdr(nbr_table_t *table, const linkaddr_t *lladdr)
     }
 
     /* Add neighbor to list */
-    list_add(nbr_table_keys, key);
+    emb6_list_add(nbr_table_keys, key);
 
     /* Get index from newly allocated neighbor */
     index = index_from_key(key);

@@ -62,7 +62,7 @@
 
 #include "bsp.h"
 #include "evproc.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "logger.h"
 
 /*==============================================================================

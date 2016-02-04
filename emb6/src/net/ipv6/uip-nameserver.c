@@ -46,7 +46,7 @@
 #include "uip.h"
 #include "uip-nameserver.h"
 #include "bsp.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "memb.h"
 
 #include <string.h>
@@ -113,7 +113,7 @@ uip_nameserver_update(uip_ipaddr_t *nameserver, uint32_t lifetime)
 
   if(e == NULL) {
     if((e = memb_alloc(&dnsmemb)) != NULL) {
-      list_add(dns, e);
+      emb6_list_add(dns, e);
     } else {
       uip_nameserver_record *p;
       for(e = list_head(dns), p = list_head(dns); p != NULL;
@@ -130,7 +130,7 @@ uip_nameserver_update(uip_ipaddr_t *nameserver, uint32_t lifetime)
   if(e != NULL) {
     if(lifetime == 0) {
       memb_free(&dnsmemb, e);
-      list_remove(dns, e);
+      emb6_list_remove(dns, e);
     } else {
       e->added = bsp_getTick();
       e->lifetime = lifetime;
@@ -154,7 +154,7 @@ purge(void)
   uint32_t time = bsp_getTick();
   for(e = list_head(dns); e != NULL; e = list_item_next(e)) {
     if(DNS_EXPIRATION(e) < time) {
-      list_remove(dns, e);
+      emb6_list_remove(dns, e);
       memb_free(&dnsmemb, e);
       e = list_head(dns);
     }

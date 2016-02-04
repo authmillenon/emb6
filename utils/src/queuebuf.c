@@ -128,7 +128,7 @@ static struct ctimer renew_timer;
 #endif
 
 #if QUEUEBUF_DEBUG
-#include "clist.h"
+#include "emb6_clist.h"
 LIST(queuebuf_list);
 #endif /* QUEUEBUF_DEBUG */
 
@@ -349,7 +349,7 @@ queuebuf_new_from_packetbuf(void)
     buf = memb_alloc(&bufmem);
     if(buf != NULL) {
 #if QUEUEBUF_DEBUG
-      list_add(queuebuf_list, buf);
+      emb6_list_add(queuebuf_list, buf);
       buf->file = file;
       buf->line = line;
       buf->time = clock_time();
@@ -450,7 +450,7 @@ queuebuf_free(struct queuebuf *buf)
     printf("#A q=%d\n", queuebuf_len);
 #endif /* QUEUEBUF_STATS */
 #if QUEUEBUF_DEBUG
-    list_remove(queuebuf_list, buf);
+    emb6_list_remove(queuebuf_list, buf);
 #endif /* QUEUEBUF_DEBUG */
   } else if(memb_inmemb(&refbufmem, buf)) {
     memb_free(&refbufmem, buf);

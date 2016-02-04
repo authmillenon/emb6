@@ -49,7 +49,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include "random.h"
+#include "emb6_random.h"
 #include "uip-nd6.h"
 #include "uip-ds6.h"
 #include "uip-packetqueue.h"
@@ -343,7 +343,7 @@ uip_ds6_addr_add(uip_ipaddr_t *ipaddr, unsigned long vlifetime, uint8_t type)
     }
 #if UIP_ND6_DEF_MAXDADNS > 0
     locaddr->state = ADDR_TENTATIVE;
-    timer_set(&locaddr->dadtimer,
+    timer_emb6_set(&locaddr->dadtimer,
               random_rand() % (UIP_ND6_MAX_RTR_SOLICITATION_DELAY *
                       bsp_get(E_BSP_GET_TRES)));
     locaddr->dadnscount = 0;
@@ -591,7 +591,7 @@ uip_ds6_dad(uip_ds6_addr_t *addr)
   if(addr->dadnscount < uip_ds6_if.maxdadns) {
     uip_nd6_ns_output(NULL, NULL, &addr->ipaddr);
     addr->dadnscount++;
-    timer_set(&addr->dadtimer,
+    timer_emb6_set(&addr->dadtimer,
               uip_ds6_if.retrans_timer / 1000 * bsp_get(E_BSP_GET_TRES));
     return;
   }

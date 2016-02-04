@@ -41,7 +41,7 @@
 #define REST_ENGINE_H_
 
 
-#include "clist.h"
+#include "emb6_clist.h"
 #include "etimer.h"
 
 

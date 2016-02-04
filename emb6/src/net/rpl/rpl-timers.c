@@ -47,7 +47,7 @@
 #if UIP_CONF_IPV6_MULTICAST
 #include "uip-mcast6.h"
 #endif
-#include "random.h"
+#include "emb6_random.h"
 #include "ctimer.h"
 
 #define DEBUG DEBUG_NONE

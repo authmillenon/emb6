@@ -31,7 +31,7 @@
 
 #include "emb6.h"
 #include "bsp.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "etimer.h"
 #include "emb6_conf.h"
 #include "tcpip.h"

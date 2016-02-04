@@ -28,7 +28,7 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: random.h,v 1.2 2010/12/13 16:52:02 dak664 Exp $
+ * @(#)$Id: emb6_random.h,v 1.2 2010/12/13 16:52:02 dak664 Exp $
  */
 /**
  * \file

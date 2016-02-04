@@ -42,7 +42,7 @@
 #include "uip-ds6.h"
 #include "uip.h"
 
-#include "clist.h"
+#include "emb6_clist.h"
 #include "memb.h"
 #include "nbr-table.h"
 
@@ -133,14 +133,14 @@ uip_ds6_notification_add(struct uip_ds6_notification *n,
 {
   if(n != NULL && c != NULL) {
     n->callback = c;
-    list_add(notificationlist, n);
+    emb6_list_add(notificationlist, n);
   }
 }
 /*---------------------------------------------------------------------------*/
 void
 uip_ds6_notification_rm(struct uip_ds6_notification *n)
 {
-  list_remove(notificationlist, n);
+  emb6_list_remove(notificationlist, n);
 }
 #endif
 /*---------------------------------------------------------------------------*/
@@ -249,7 +249,7 @@ uip_ds6_route_lookup(uip_ipaddr_t *addr)
          list. The list is ordered by how recently we looked them up:
          the least recently used route will be at the end of the
          list - for fast lookups (assuming multiple packets to the same node). */
-      list_remove(routelist, found_route);
+      emb6_list_remove(routelist, found_route);
       list_push(routelist, found_route);
   }
 
@@ -375,7 +375,7 @@ uip_ds6_route_add(uip_ipaddr_t *ipaddr, uint8_t length,
 
     nbrr->route = r;
     /* Add the route to this neighbor */
-    list_add(routes->route_list, nbrr);
+    emb6_list_add(routes->route_list, nbrr);
     r->neighbor_routes = routes;
     num_routes++;
 
@@ -421,7 +421,7 @@ uip_ds6_route_rm(uip_ds6_route_t *route)
     PRINTF("\n\r");
 
     /* Remove the route from the route list */
-    list_remove(routelist, route);
+    emb6_list_remove(routelist, route);
 
     /* Find the corresponding neighbor_route and remove it. */
     for(neighbor_route = list_head(route->neighbor_routes->route_list);
@@ -433,7 +433,7 @@ uip_ds6_route_rm(uip_ds6_route_t *route)
         uip_debug_ipaddr_print(&route->ipaddr);
         PRINTF("\n");
     }
-    list_remove(route->neighbor_routes->route_list, neighbor_route);
+    emb6_list_remove(route->neighbor_routes->route_list, neighbor_route);
     if(list_head(route->neighbor_routes->route_list) == NULL) {
       /* If this was the only route using this neighbor, remove the
          neibhor from the table */
@@ -581,7 +581,7 @@ uip_ds6_defrt_rm(uip_ds6_defrt_t *defrt)
       d = list_item_next(d)) {
     if(d == defrt) {
       PRINTF("Removing default route\n\r");
-      list_remove(defaultrouterlist, defrt);
+      emb6_list_remove(defaultrouterlist, defrt);
       memb_free(&defaultroutermemb, defrt);
       ANNOTATE("#L %u 0\n\r", defrt->ipaddr.u8[sizeof(uip_ipaddr_t) - 1]);
 #if UIP_DS6_NOTIFICATIONS

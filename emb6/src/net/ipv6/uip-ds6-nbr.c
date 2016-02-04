@@ -46,7 +46,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include "clist.h"
+#include "emb6_clist.h"
 #include "linkaddr.h"
 #include "packetbuf.h"
 #include "uip-ds6-nbr.h"

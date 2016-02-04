@@ -62,7 +62,7 @@
 ==============================================================================*/
 
 #include "etimer.h"
-#include "clist.h"
+#include "emb6_clist.h"
 
 #include "emb6_conf.h"
 #include "emb6.h"
@@ -97,8 +97,8 @@ static     char         gc_init = 0;
 /*============================================================================*/
 static void _etimer_addTimer(struct etimer *pst_timer)
 {
-    list_remove(gp_etimList, pst_timer);
-    list_add(gp_etimList, pst_timer);
+    emb6_list_remove(gp_etimList, pst_timer);
+    emb6_list_add(gp_etimList, pst_timer);
     pst_timer->active = TMR_ACTIVE;
 }
 
@@ -151,7 +151,7 @@ void etimer_request_poll(void)
             // Generate timer expired event
             evproc_putEvent(E_EVPROC_TAIL,EVENT_TYPE_TIMER_EXP,pst_tTim);
             // Remove matched timer from the list
-            list_remove(gp_etimList, pst_tTim);
+            emb6_list_remove(gp_etimList, pst_tTim);
             // Change active flag
             pst_tTim->active = TMR_NOT_ACTIVE;
         } /* if */
@@ -164,7 +164,7 @@ void etimer_request_poll(void)
 /*============================================================================*/
 void etimer_set(struct etimer *pst_et, clock_time_t l_interval, pfn_callback_t pfn_callback)
 {
-    timer_set(&pst_et->timer, l_interval);
+    timer_emb6_set(&pst_et->timer, l_interval);
     _etimer_addTimer(pst_et);
     evproc_regCallback(EVENT_TYPE_TIMER_EXP, pfn_callback);
     LOG_INFO("add new timer %p\n\r",pst_et);
@@ -244,7 +244,7 @@ clock_time_t etimer_next_expiration_time(void)
 /*============================================================================*/
 void etimer_stop(struct etimer *pst_et)
 {
-    list_remove(gp_etimList, pst_et);
+    emb6_list_remove(gp_etimList, pst_et);
     pst_et->active = TMR_NOT_ACTIVE;
 } /* etimer_stop() */
 

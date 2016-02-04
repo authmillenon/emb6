@@ -1738,7 +1738,7 @@ input(void)
 
       sicslowpan_len = frag_size;
       reass_tag = frag_tag;
-      timer_set(&reass_timer, SICSLOWPAN_REASS_MAXAGE * bsp_get(E_BSP_GET_TRES));
+      timer_emb6_set(&reass_timer, SICSLOWPAN_REASS_MAXAGE * bsp_get(E_BSP_GET_TRES));
       PRINTFI("sicslowpan input: INIT FRAGMENTATION (len %d, tag %d)\n\r",
              sicslowpan_len, reass_tag);
       linkaddr_copy(&frag_sender, packetbuf_addr(PACKETBUF_ADDR_SENDER));

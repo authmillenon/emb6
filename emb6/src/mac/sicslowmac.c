@@ -51,7 +51,7 @@
 #include "frame802154.h"
 #include "packetbuf.h"
 #include "queuebuf.h"
-#include "random.h"
+#include "emb6_random.h"
 
 #define DEBUG DEBUG_NONE
 

@@ -42,7 +42,7 @@
 #define UIP_DS6_ROUTE_H
 
 #include "stimer.h"
-#include "clist.h"
+#include "emb6_clist.h"
 
 void uip_ds6_route_init(void);
 

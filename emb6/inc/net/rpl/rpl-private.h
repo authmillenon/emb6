@@ -39,7 +39,7 @@
 
 #include "rpl.h"
 
-#include "clist.h"
+#include "emb6_clist.h"
 #include "uip.h"
 #include "bsp.h"
 #include "ctimer.h"

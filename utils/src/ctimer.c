@@ -66,7 +66,7 @@
 #include "evproc.h"
 #include "ctimer.h"
 #include "timer.h"
-#include "clist.h"
+#include "emb6_clist.h"
 
 /*==============================================================================
                              LOCAL MACROS
@@ -102,7 +102,7 @@ void ctimer_refresh(c_event_t event, void * data)
         pst_cTim != NULL; \
         pst_cTim = pst_cTim->next) {
       if(&pst_cTim->etimer == data) {
-          list_remove(gp_ctimList, pst_cTim);
+          emb6_list_remove(gp_ctimList, pst_cTim);
           if(pst_cTim->f != NULL) {
               pst_cTim->f(pst_cTim->ptr);
           }
@@ -143,7 +143,7 @@ void ctimer_set(struct ctimer *c, clock_time_t t,
         c->etimer.timer.interval = t;
     }
 
-    list_add(gp_ctimList, c);
+    emb6_list_add(gp_ctimList, c);
 }
 /*============================================================================*/
 /*  ctimer_reset()                                                     */
@@ -154,8 +154,8 @@ void ctimer_reset(struct ctimer *c)
     etimer_reset(&c->etimer);
   }
 
-  list_remove(gp_ctimList, c);
-  list_add(gp_ctimList, c);
+  emb6_list_remove(gp_ctimList, c);
+  emb6_list_add(gp_ctimList, c);
 }
 /*============================================================================*/
 /*  ctimer_restart()                                                     */
@@ -166,8 +166,8 @@ void ctimer_restart(struct ctimer *c)
     etimer_restart(&c->etimer);
   }
 
-  list_remove(gp_ctimList, c);
-  list_add(gp_ctimList, c);
+  emb6_list_remove(gp_ctimList, c);
+  emb6_list_add(gp_ctimList, c);
 }
 /*============================================================================*/
 /*  ctimer_stop()                                                     */
@@ -180,7 +180,7 @@ void ctimer_stop(struct ctimer *pst_stopTim)
         pst_stopTim->etimer.next = NULL;
         pst_stopTim->etimer.active = TMR_NOT_ACTIVE;
     }
-    list_remove(gp_ctimList, pst_stopTim);
+    emb6_list_remove(gp_ctimList, pst_stopTim);
 }
 /*============================================================================*/
 /*  ctimer_expired()                                                     */

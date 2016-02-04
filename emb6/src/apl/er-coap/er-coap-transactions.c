@@ -43,7 +43,7 @@
 #include "timer.h"
 #include "evproc.h"
 #include "memb.h"
-#include "random.h"
+#include "emb6_random.h"
 
 #include "tcpip.h"
 
@@ -84,7 +84,7 @@ coap_new_transaction(uint16_t mid, uip_ipaddr_t *addr, uint16_t port)
     t->addr = *addr;
     t->port = port;
 
-    list_add(transactions_list, t); /* list itself makes sure same element is not added twice */
+    emb6_list_add(transactions_list, t); /* list itself makes sure same element is not added twice */
   }
 
   return t;
@@ -148,7 +148,7 @@ coap_clear_transaction(coap_transaction_t *t)
     PRINTF("Freeing transaction %u: %p\n\r", t->mid, t);
 
     etimer_stop(&t->retrans_timer);
-    list_remove(transactions_list, t);
+    emb6_list_remove(transactions_list, t);
     memb_free(&transactions_memb, t);
   }
 }

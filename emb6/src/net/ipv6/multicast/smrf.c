@@ -52,7 +52,7 @@
 #include "smrf.h"
 #include "rpl.h"
 #include "packetbuf.h"
-#include "random.h"
+#include "emb6_random.h"
 //#include "net/netstack.h"
 
 #define DEBUG DEBUG_NONE

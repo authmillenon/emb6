@@ -43,7 +43,7 @@
 //#include "contiki.h"
 #include "emb6_conf.h"
 #include "emb6.h"
-#include "clist.h"
+#include "emb6_clist.h"
 #include "memb.h"
 #include "uip.h"
 #include "uip-mcast6-route.h"
@@ -88,7 +88,7 @@ uip_mcast6_route_add(uip_ipaddr_t *group)
     if(locmcastrt == NULL) {
       return NULL;
     }
-    list_add(mcast_route_list, locmcastrt);
+    emb6_list_add(mcast_route_list, locmcastrt);
   }
 
   /* Reaching here means we either found the prefix or allocated a new one */
@@ -106,7 +106,7 @@ uip_mcast6_route_rm(uip_mcast6_route_t *route)
       locmcastrt != NULL;
       locmcastrt = list_item_next(locmcastrt)) {
     if(locmcastrt == route) {
-      list_remove(mcast_route_list, route);
+      emb6_list_remove(mcast_route_list, route);
       memb_free(&mcast_route_memb, route);
       return;
     }

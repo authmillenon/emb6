@@ -67,7 +67,7 @@
 #include "ctimer.h"
 #include "packetbuf.h"
 
-#include "ringbuffer.h"
+#include "emb6_ringbuffer.h"
 
 /*==============================================================================
                                      MACROS

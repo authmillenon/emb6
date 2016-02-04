@@ -78,7 +78,7 @@
 #include "uip-ds6.h"
 #include "uip-nameserver.h"
 #include "bsp.h"
-#include "random.h"
+#include "emb6_random.h"
 
 /*------------------------------------------------------------------*/
 #define DEBUG DEBUG_NONE

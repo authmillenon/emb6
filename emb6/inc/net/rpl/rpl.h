@@ -41,7 +41,7 @@
 #include "emb6_conf.h"
 #include "emb6.h"
 
-#include "clist.h"
+#include "emb6_clist.h"
 #include "uip.h"
 #include "uip-ds6.h"
 #include "ctimer.h"

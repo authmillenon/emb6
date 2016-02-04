@@ -36,7 +36,7 @@
  */
 
 
-#include "random.h"
+#include "emb6_random.h"
 
 #include <stdlib.h>
 

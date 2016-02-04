@@ -84,7 +84,7 @@
  * A timer.
  *
  * This structure is used for declaring a timer. The timer must be set
- * with timer_set() before it can be used.
+ * with timer_emb6_set() before it can be used.
  *
  * \hideinitializer
  */
@@ -93,7 +93,7 @@ struct timer {
   clock_time_t interval;
 };
 
-void timer_set(struct timer *t, clock_time_t interval);
+void timer_emb6_set(struct timer *t, clock_time_t interval);
 void timer_reset(struct timer *t);
 void timer_restart(struct timer *t);
 int timer_expired(struct timer *t);
