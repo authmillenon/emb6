@@ -44,7 +44,12 @@ void _udp_sock_callback(c_event_t c_event, p_data_t p_data);
 
 static uint8_t buf[UIP_BUFSIZE];
 
-#define UIP_IP_BUF   ((struct uip_udpip_hdr *)&uip_buf[UIP_LLH_LEN])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_udpip_hdr *uip_ip_buf(void) {
+    return ((struct uip_udpip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+#define UIP_IP_BUF   (uip_ip_buf())
 
 #define     LOGGER_ENABLE        LOGGER_CORE
 #if            LOGGER_ENABLE     ==     TRUE

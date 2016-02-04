@@ -152,6 +152,61 @@ uint8_t uip_ext_len = 0;
 uint8_t uip_ext_opt_offset = 0;
 /** @} */
 
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void) {
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_icmp_hdr *uip_icmp_buf(void) {
+    return ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_udp_hdr *uip_udp_buf(void) {
+    return ((struct uip_udp_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN]);
+}
+
+static inline struct uip_tcp_hdr *uip_tcp_buf(void) {
+    return ((struct uip_tcp_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN]);
+}
+
+static inline struct uip_ext_hdr *uip_ext_buf(void) {
+    return ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_routing_hdr *uip_routing_buf(void) {
+    return ((struct uip_routing_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_frag_hdr *uip_frag_buf(void) {
+    return ((struct uip_frag_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_hbho_hdr *uip_hbho_buf(void) {
+    return ((struct uip_hbho_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_desto_hdr *uip_desto_buf(void) {
+    return ((struct uip_desto_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_ext_hdr_opt *uip_ext_hdr_opt_buf(void) {
+    return ((struct uip_ext_hdr_opt *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+
+static inline struct uip_ext_hdr_opt_padn *uip_ext_hdr_opt_padn_buf(void) {
+    return ((struct uip_ext_hdr_opt_padn *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+
+#if UIP_CONF_IPV6_RPL
+static inline struct uip_ext_hdr_opt_rpl *uip_ext_hdr_opt_rpl_buf(void) {
+    return ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+#endif /* UIP_CONF_IPV6_RPL */
+
+static inline struct uip_icmp6_error *uip_icmp6_error_buf(void) {
+    return ((struct uip_icmp6_error *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
 /*---------------------------------------------------------------------------*/
 /* Buffers                                                                   */
 /*---------------------------------------------------------------------------*/
@@ -159,22 +214,22 @@ uint8_t uip_ext_opt_offset = 0;
  * \name Buffer defines
  *  @{
  */
-#define FBUF                             ((struct uip_tcpip_hdr *)&uip_reassbuf[0])
-#define UIP_IP_BUF                          ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_ICMP_BUF                      ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_UDP_BUF                        ((struct uip_udp_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN])
-#define UIP_TCP_BUF                        ((struct uip_tcp_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN])
-#define UIP_EXT_BUF                        ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_ROUTING_BUF                ((struct uip_routing_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_FRAG_BUF                      ((struct uip_frag_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_HBHO_BUF                      ((struct uip_hbho_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_DESTO_BUF                    ((struct uip_desto_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_EXT_HDR_OPT_BUF            ((struct uip_ext_hdr_opt *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
-#define UIP_EXT_HDR_OPT_PADN_BUF  ((struct uip_ext_hdr_opt_padn *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
+#define FBUF                             (fbuf())
+#define UIP_IP_BUF                          (uip_ip_buf())
+#define UIP_ICMP_BUF                      (uip_icmp_buf())
+#define UIP_UDP_BUF                        (uip_udp_buf())
+#define UIP_TCP_BUF                        (uip_tcp_buf())
+#define UIP_EXT_BUF                        (uip_ext_buf())
+#define UIP_ROUTING_BUF                (uip_routing_buf())
+#define UIP_FRAG_BUF                      (uip_frag_buf())
+#define UIP_HBHO_BUF                      (uip_hbho_buf())
+#define UIP_DESTO_BUF                    (uip_desto_buf())
+#define UIP_EXT_HDR_OPT_BUF            (uip_ext_hdr_opt_buf())
+#define UIP_EXT_HDR_OPT_PADN_BUF  (uip_ext_hdr_opt_padn_buf())
 #if UIP_CONF_IPV6_RPL
-#define UIP_EXT_HDR_OPT_RPL_BUF    ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
+#define UIP_EXT_HDR_OPT_RPL_BUF    (uip_ext_hdr_opt_rpl_buf())
 #endif /* UIP_CONF_IPV6_RPL */
-#define UIP_ICMP6_ERROR_BUF            ((struct uip_icmp6_error *)&uip_buf[uip_l2_l3_icmp_hdr_len])
+#define UIP_ICMP6_ERROR_BUF            (uip_icmp6_error_buf())
 /** @} */
 /**
  * \name Buffer variables
@@ -647,6 +702,9 @@ static uint8_t uip_reassflags;
 #define UIP_REASS_FLAG_FIRSTFRAG 0x02
 #define UIP_REASS_FLAG_ERROR_MSG 0x04
 
+static inline struct uip_tcpip_hdr *fbuf(void) {
+    return ((struct uip_tcpip_hdr *)&uip_reassbuf[0]);
+}
 
 /*
  * See RFC 2460 for a description of fragmentation in IPv6

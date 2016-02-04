@@ -68,9 +68,25 @@
 #define RPL_DIO_MOP_MASK                 0x38
 #define RPL_DIO_PREFERENCE_MASK          0x07
 
-#define UIP_IP_BUF       ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_ICMP_BUF     ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_ICMP_PAYLOAD ((unsigned char *)&uip_buf[uip_l2_l3_icmp_hdr_len])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline unsigned char *uip_icmp_payload(void)
+{
+    return ((unsigned char *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+#define UIP_IP_BUF       (uip_ip_buf())
+#define UIP_ICMP_BUF     (uip_icmp_buf())
+#define UIP_ICMP_PAYLOAD (uip_icmp_payload())
 /*---------------------------------------------------------------------------*/
 static void dis_input(void);
 static void dio_input(void);
@@ -950,7 +966,7 @@ dao_ack_output(rpl_instance_t *instance, uip_ipaddr_t *dest, uint8_t sequence)
 }
 /*---------------------------------------------------------------------------*/
 void
-rpl_icmp6_register_handlers()
+rpl_icmp6_register_handlers(void)
 {
     uip_icmp6_register_input_handler(&dis_handler);
     uip_icmp6_register_input_handler(&dio_handler);

@@ -56,13 +56,49 @@
 #include <string.h>
 
 /*---------------------------------------------------------------------------*/
-#define UIP_IP_BUF                ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_EXT_BUF               ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_HBHO_BUF              ((struct uip_hbho_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_HBHO_NEXT_BUF         ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len + RPL_HOP_BY_HOP_LEN])
-#define UIP_EXT_HDR_OPT_BUF       ((struct uip_ext_hdr_opt *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
-#define UIP_EXT_HDR_OPT_PADN_BUF  ((struct uip_ext_hdr_opt_padn *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
-#define UIP_EXT_HDR_OPT_RPL_BUF   ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_ext_hdr *uip_ext_buf(void)
+{
+    return ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_hbho_hdr *uip_hbho_buf(void)
+{
+    return ((struct uip_hbho_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_ext_hdr *uip_hbho_next_buf(void)
+{
+    return ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len + RPL_HOP_BY_HOP_LEN]);
+}
+
+static inline struct uip_ext_hdr_opt *uip_ext_hdr_opt_buf(int uip_ext_opt_offset)
+{
+    return ((struct uip_ext_hdr_opt *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+
+static inline struct uip_ext_hdr_opt_padn *uip_ext_hdr_opt_padn_buf(int uip_ext_opt_offset)
+{
+    return ((struct uip_ext_hdr_opt_padn *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+
+static inline struct uip_ext_hdr_opt_rpl *uip_ext_hdr_opt_rpl_buf(int uip_ext_opt_offset)
+{
+    return ((struct uip_ext_hdr_opt_rpl *)&uip_buf[uip_l2_l3_hdr_len + uip_ext_opt_offset]);
+}
+
+#define UIP_IP_BUF                (uip_ip_buf())
+#define UIP_EXT_BUF               (uip_ext_buf())
+#define UIP_HBHO_BUF              (uip_hbho_buf())
+#define UIP_HBHO_NEXT_BUF         (uip_hbho_next_buf())
+#define UIP_EXT_HDR_OPT_BUF       (uip_ext_hdr_opt_buf(uip_ext_opt_offset))
+#define UIP_EXT_HDR_OPT_PADN_BUF  (uip_ext_hdr_opt_padn_buf(uip_ext_opt_offset))
+#define UIP_EXT_HDR_OPT_RPL_BUF   (uip_ext_hdr_opt_rpl_buf(uip_ext_opt_offset))
 /*---------------------------------------------------------------------------*/
 int
 rpl_verify_header(int uip_ext_opt_offset)

@@ -93,6 +93,37 @@ void uip_log(char *msg);
 #define UIP_LOG(m)
 #endif /* UIP_LOGGING == 1 */
 
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])  /**< Pointer to IP header */;
+}
+
+static inline struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])  /**< Pointer to ICMP header*/;
+}
+
+static inline uip_nd6_rs *uip_nd6_rs_buf(void)
+{
+    return ((uip_nd6_rs *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+static inline uip_nd6_ra *uip_nd6_ra_buf(void)
+{
+    return ((uip_nd6_ra *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+static inline uip_nd6_ns *uip_nd6_ns_buf(void)
+{
+    return ((uip_nd6_ns *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+static inline uip_nd6_na *uip_nd6_na_buf(void)
+{
+    return ((uip_nd6_na *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
 /*------------------------------------------------------------------*/
 /** @{ */
 /** \name Pointers to the header structures.
@@ -106,19 +137,19 @@ void uip_log(char *msg);
  *  value of these length variables
  */
 
-#define UIP_IP_BUF                ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])  /**< Pointer to IP header */
-#define UIP_ICMP_BUF            ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])  /**< Pointer to ICMP header*/
+#define UIP_IP_BUF                (uip_ip_buf())  /**< Pointer to IP header */
+#define UIP_ICMP_BUF            (uip_icmp_buf())  /**< Pointer to ICMP header*/
 /**@{  Pointers to messages just after icmp header */
-#define UIP_ND6_RS_BUF            ((uip_nd6_rs *)&uip_buf[uip_l2_l3_icmp_hdr_len])
-#define UIP_ND6_RA_BUF            ((uip_nd6_ra *)&uip_buf[uip_l2_l3_icmp_hdr_len])
-#define UIP_ND6_NS_BUF            ((uip_nd6_ns *)&uip_buf[uip_l2_l3_icmp_hdr_len])
-#define UIP_ND6_NA_BUF            ((uip_nd6_na *)&uip_buf[uip_l2_l3_icmp_hdr_len])
+#define UIP_ND6_RS_BUF            (uip_nd6_rs_buf())
+#define UIP_ND6_RA_BUF            (uip_nd6_ra_buf())
+#define UIP_ND6_NS_BUF            (uip_nd6_ns_buf())
+#define UIP_ND6_NA_BUF            (uip_nd6_na_buf())
 /** @} */
 /** Pointer to ND option */
-#define UIP_ND6_OPT_HDR_BUF  ((uip_nd6_opt_hdr *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset])
-#define UIP_ND6_OPT_PREFIX_BUF ((uip_nd6_opt_prefix_info *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset])
-#define UIP_ND6_OPT_MTU_BUF ((uip_nd6_opt_mtu *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset])
-#define UIP_ND6_OPT_RDNSS_BUF ((uip_nd6_opt_dns *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset])
+#define UIP_ND6_OPT_HDR_BUF  (uip_nd6_opt_hdr_buf())
+#define UIP_ND6_OPT_PREFIX_BUF (uip_nd6_opt_prefix_buf())
+#define UIP_ND6_OPT_MTU_BUF (uip_nd6_opt_mtu_buf())
+#define UIP_ND6_OPT_RDNSS_BUF (uip_nd6_opt_rdnss_buf())
 /** @} */
 
 static uint8_t nd6_opt_offset;                     /** Offset from the end of the icmpv6 header to the option in uip_buf*/
@@ -132,6 +163,27 @@ static uip_ds6_prefix_t *prefix; /**  Pointer to a prefix list entry */
 static uip_ds6_nbr_t *nbr; /**  Pointer to a nbr cache entry*/
 static uip_ds6_defrt_t *defrt; /**  Pointer to a router list entry */
 static uip_ds6_addr_t *addr; /**  Pointer to an interface address */
+
+static inline uip_nd6_opt_hdr *uip_nd6_opt_hdr_buf(void)
+{
+    return ((uip_nd6_opt_hdr *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset]);
+}
+
+static inline uip_nd6_opt_prefix_info *uip_nd6_opt_prefix_buf(void)
+{
+    return ((uip_nd6_opt_prefix_info *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset]);
+}
+
+static inline uip_nd6_opt_mtu *uip_nd6_opt_mtu_buf(void)
+{
+    return ((uip_nd6_opt_mtu *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset]);
+}
+
+static inline uip_nd6_opt_dns *uip_nd6_opt_rdnss_buf(void)
+{
+    return ((uip_nd6_opt_dns *)&uip_buf[uip_l2_l3_icmp_hdr_len + nd6_opt_offset]);
+}
+
 /*------------------------------------------------------------------*/
 /* create a llao */ 
 static void
@@ -1054,7 +1106,7 @@ UIP_ICMP6_HANDLER(ra_input_handler, ICMP6_RA, UIP_ICMP6_HANDLER_CODE_ANY,
 #endif
 /*---------------------------------------------------------------------------*/
 void
-uip_nd6_init()
+uip_nd6_init(void)
 {
 
 #if UIP_ND6_SEND_NA

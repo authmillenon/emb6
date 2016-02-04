@@ -72,9 +72,24 @@ void uip_log(char *msg);
 #define UIP_LOG(m)
 #endif
 
-#define UIP_ICMP_BUF ((struct uip_icmp_hdr *)&uip_buf[UIP_LLIPH_LEN + uip_ext_len])
-#define UIP_IP_BUF ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_TCP_BUF ((struct uip_tcpip_hdr *)&uip_buf[UIP_LLH_LEN])
+static inline struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[UIP_LLIPH_LEN + uip_ext_len]);
+}
+
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_tcpip_hdr *uip_tcp_buf(void)
+{
+    return ((struct uip_tcpip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+#define UIP_ICMP_BUF (uip_icmp_buf())
+#define UIP_IP_BUF (uip_ip_buf())
+#define UIP_TCP_BUF (uip_tcp_buf())
 
 #ifdef UIP_FALLBACK_INTERFACE
 extern struct uip_fallback_interface UIP_FALLBACK_INTERFACE;
@@ -165,15 +180,15 @@ unsigned char tcpip_is_forwarding; /* Forwarding right now? */
 //PROCESS(tcpip_process, "TCP/IP stack");
 
 /*---------------------------------------------------------------------------*/
+#if UIP_TCP
 static void
 start_periodic_tcp_timer(void)
 {
-#if UIP_TCP
   if(etimer_expired(&periodic)) {
     etimer_restart(&periodic);
   }
-#endif /* UIP_TCP */
 }
+#endif /* UIP_TCP */
 /*---------------------------------------------------------------------------*/
 static void
 check_for_tcp_syn(void)

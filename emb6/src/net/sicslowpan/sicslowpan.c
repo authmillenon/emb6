@@ -161,13 +161,34 @@ void uip_log(char *msg);
 /** \name Pointers in the sicslowpan and uip buffer
  *  @{
  */
-#define SICSLOWPAN_IP_BUF   ((struct uip_ip_hdr *)&sicslowpan_buf[UIP_LLH_LEN])
-#define SICSLOWPAN_UDP_BUF ((struct uip_udp_hdr *)&sicslowpan_buf[UIP_LLIPH_LEN])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
 
-#define UIP_IP_BUF          ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_UDP_BUF          ((struct uip_udp_hdr *)&uip_buf[UIP_LLIPH_LEN])
-#define UIP_TCP_BUF          ((struct uip_tcp_hdr *)&uip_buf[UIP_LLIPH_LEN])
-#define UIP_ICMP_BUF          ((struct uip_icmp_hdr *)&uip_buf[UIP_LLIPH_LEN])
+struct uip_udp_hdr *uip_udp_buf(void)
+{
+    return ((struct uip_udp_hdr *)&uip_buf[UIP_LLIPH_LEN]);
+}
+
+struct uip_tcp_hdr *uip_tcp_buf(void)
+{
+    return ((struct uip_tcp_hdr *)&uip_buf[UIP_LLIPH_LEN]);
+}
+
+struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[UIP_LLIPH_LEN]);
+}
+
+#define SICSLOWPAN_IP_BUF   (sicslowpan_ip_buf())
+#define SICSLOWPAN_UDP_BUF (sicslowpan_udp_buf())
+
+#define UIP_IP_BUF          (uip_ip_buf())
+#define UIP_UDP_BUF          (uip_udp_buf())
+#define UIP_TCP_BUF          (uip_tcp_buf())
+#define UIP_ICMP_BUF          (uip_icmp_buf())
 /** @} */
 
 
@@ -282,6 +303,16 @@ static s_ns_t*        p_ns = NULL;
 /*-------------------------------------------------------------------------*/
 static struct rime_sniffer *callback = NULL;
 
+struct uip_ip_hdr *sicslowpan_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&sicslowpan_buf[UIP_LLH_LEN]);
+}
+
+struct uip_udp_hdr *sicslowpan_udp_buf(void)
+{
+    return ((struct uip_udp_hdr *)&sicslowpan_buf[UIP_LLIPH_LEN]);
+}
+
 void
 rime_sniffer_add(struct rime_sniffer *s)
 {
@@ -295,7 +326,7 @@ rime_sniffer_remove(struct rime_sniffer *s)
 }
 
 static void
-set_packet_attrs()
+set_packet_attrs(void)
 {
   int c = 0;
   /* set protocol in NETWORK_ID */

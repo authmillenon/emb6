@@ -59,11 +59,34 @@
 #define PRINT6ADDR(addr)
 #endif
 
-#define UIP_IP_BUF                ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_ICMP_BUF            ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_ICMP6_ERROR_BUF  ((struct uip_icmp6_error *)&uip_buf[uip_l2_l3_icmp_hdr_len])
-#define UIP_EXT_BUF              ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_FIRST_EXT_BUF        ((struct uip_ext_hdr *)&uip_buf[UIP_LLIPH_LEN])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_icmp6_error *uip_icmp6_error_buf(void) {
+    return ((struct uip_icmp6_error *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+static inline struct uip_ext_hdr *uip_ext_buf(void) {
+    return ((struct uip_ext_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_ext_hdr *uip_first_ext_buf(void) {
+    return ((struct uip_ext_hdr *)&uip_buf[UIP_LLIPH_LEN]);
+}
+
+#define UIP_IP_BUF                (uip_ip_buf())
+#define UIP_ICMP_BUF            (uip_icmp_buf())
+#define UIP_ICMP6_ERROR_BUF  (uip_icmp6_error_buf())
+#define UIP_EXT_BUF              (uip_ext_buf())
+#define UIP_FIRST_EXT_BUF        (uip_first_ext_buf())
 
 /** \brief temporary IP address */
 static uip_ipaddr_t tmp_ipaddr;
@@ -409,7 +432,7 @@ UIP_ICMP6_HANDLER(echo_reply_handler, ICMP6_ECHO_REPLY,
                   UIP_ICMP6_HANDLER_CODE_ANY, echo_reply_input);
 /*---------------------------------------------------------------------------*/
 void
-uip_icmp6_init()
+uip_icmp6_init(void)
 {
   /* Register Echo Request and Reply handlers */
   uip_icmp6_register_input_handler(&echo_request_handler);

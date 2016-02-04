@@ -126,7 +126,7 @@ uip_mcast6_route_count(void)
 }
 /*---------------------------------------------------------------------------*/
 void
-uip_mcast6_route_init()
+uip_mcast6_route_init(void)
 {
   memb_init(&mcast_route_memb);
   list_init(mcast_route_list);

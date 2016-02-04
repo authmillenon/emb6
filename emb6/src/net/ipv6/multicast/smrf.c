@@ -77,7 +77,13 @@ static uint8_t fwd_spread;
 /*---------------------------------------------------------------------------*/
 /* uIPv6 Pointers */
 /*---------------------------------------------------------------------------*/
-#define UIP_IP_BUF        ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+#define UIP_IP_BUF        (uip_ip_buf())
 /*---------------------------------------------------------------------------*/
 static void
 mcast_fwd(void *p)
@@ -90,7 +96,7 @@ mcast_fwd(void *p)
 }
 /*---------------------------------------------------------------------------*/
 static uint8_t
-in()
+in(void)
 {
   rpl_dag_t *d;                 /* Our DODAG */
   uip_ipaddr_t *parent_ipaddr;  /* Our pref. parent's IPv6 address */
@@ -201,7 +207,7 @@ init(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
-out()
+out(void)
 {
   return;
 }

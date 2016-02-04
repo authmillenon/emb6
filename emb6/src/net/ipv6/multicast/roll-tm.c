@@ -290,12 +290,17 @@ struct mcast_packet {
 #define MCAST_PACKET_S_BIT       0x20   /* Must Send Next Pass */
 #define MCAST_PACKET_L_BIT       0x10   /* Is listed in ICMP message */
 
+static inline struct uip_ip_hdr *_to_ip_hdr(void *ptr)
+{
+    return (struct uip_ip_hdr *)ptr;
+}
+
 /* Fetch a pointer to the Seed ID of a buffered message p */
 #if ROLL_TM_SHORT_SEEDS
 #define MCAST_PACKET_GET_SEED(p) ((seed_id_t *)&((p)->seed_id))
 #else
 #define MCAST_PACKET_GET_SEED(p) \
-    ((seed_id_t *)&((struct uip_ip_hdr *)&(p)->buff[UIP_LLH_LEN])->srcipaddr)
+    ((seed_id_t *)&(((struct uip_ip_hdr *)&(p))->buff[UIP_LLH_LEN])->srcipaddr)
 #endif
 
 /**
@@ -303,7 +308,7 @@ struct mcast_packet {
  * p: pointer to a packet buffer
  */
 #define MCAST_PACKET_TTL(p) \
-    (((struct uip_ip_hdr *)(p)->buff)->ttl)
+    (_to_ip_hdr((p)->buff)->ttl)
 
 /**
  * \brief Set 'Is Used' bit for packet p
@@ -462,14 +467,55 @@ static uint16_t last_seq;
 /*---------------------------------------------------------------------------*/
 /* uIPv6 Pointers */
 /*---------------------------------------------------------------------------*/
-#define UIP_DATA_BUF      ((uint8_t *)&uip_buf[uip_l2_l3_hdr_len + UIP_UDPH_LEN])
-#define UIP_UDP_BUF       ((struct uip_udp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_EXT_BUF       ((struct uip_ext_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN])
-#define UIP_EXT_BUF_NEXT  ((uint8_t *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN + HBHO_TOTAL_LEN])
-#define UIP_EXT_OPT_FIRST ((struct hbho_mcast *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN + 2])
-#define UIP_IP_BUF        ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_ICMP_BUF      ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
-#define UIP_ICMP_PAYLOAD  ((unsigned char *)&uip_buf[uip_l2_l3_icmp_hdr_len])
+/* least intrusive way to prevent -Wstrict-aliasing from firing */
+static inline uint8_t *uip_data_buf(void)
+{
+    return ((uint8_t *)&uip_buf[uip_l2_l3_hdr_len + UIP_UDPH_LEN]);
+}
+
+static inline struct uip_udp_hdr *uip_udp_buf(void)
+{
+    return ((struct uip_udp_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline struct uip_ext_hdr *uip_ext_buf(void)
+{
+    return ((struct uip_ext_hdr *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN]);
+}
+
+uint8_t *uip_ext_buf_next(void)
+{
+    return ((uint8_t *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN + HBHO_TOTAL_LEN]);
+}
+
+static inline struct hbho_mcast *uip_ext_opt_first(void)
+{
+    return ((struct hbho_mcast *)&uip_buf[UIP_LLH_LEN + UIP_IPH_LEN + 2]);
+}
+
+static inline struct uip_ip_hdr *uip_ip_buf(void)
+{
+    return ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN]);
+}
+
+static inline struct uip_icmp_hdr *uip_icmp_buf(void)
+{
+    return ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len]);
+}
+
+static inline unsigned char *uip_icmp_payload(void)
+{
+    return ((unsigned char *)&uip_buf[uip_l2_l3_icmp_hdr_len]);
+}
+
+#define UIP_DATA_BUF      (uip_data_buf())
+#define UIP_UDP_BUF       (uip_udp_buf())
+#define UIP_EXT_BUF       (uip_ext_buf())
+#define UIP_EXT_BUF_NEXT  (uip_ext_buf_next())
+#define UIP_EXT_OPT_FIRST (uip_ext_opt_first())
+#define UIP_IP_BUF        (uip_ip_buf())
+#define UIP_ICMP_BUF      (uip_icmp_buf())
+#define UIP_ICMP_PAYLOAD  (uip_icmp_payload())
 extern uint16_t uip_slen;
 /*---------------------------------------------------------------------------*/
 /* Local function prototypes */
@@ -689,7 +735,7 @@ reset_trickle_timer(uint8_t index)
 }
 /*---------------------------------------------------------------------------*/
 static struct sliding_window *
-window_allocate()
+window_allocate(void)
 {
   for(iterswptr = &windows[ROLL_TM_WINS - 1]; iterswptr >= windows;
       iterswptr--) {
@@ -721,7 +767,7 @@ window_lookup(seed_id_t *s, uint8_t m)
 }
 /*---------------------------------------------------------------------------*/
 static void
-window_update_bounds()
+window_update_bounds(void)
 {
   for(iterswptr = &windows[ROLL_TM_WINS - 1]; iterswptr >= windows;
       iterswptr--) {
@@ -748,7 +794,7 @@ window_update_bounds()
 }
 /*---------------------------------------------------------------------------*/
 static struct mcast_packet *
-buffer_reclaim()
+buffer_reclaim(void)
 {
   struct sliding_window *largest = windows;
   struct mcast_packet *rv;
@@ -790,7 +836,7 @@ buffer_reclaim()
 }
 /*---------------------------------------------------------------------------*/
 static struct mcast_packet *
-buffer_allocate()
+buffer_allocate(void)
 {
   for(locmpptr = &buffered_msgs[ROLL_TM_BUFF_NUM - 1];
       locmpptr >= buffered_msgs; locmpptr--) {
@@ -802,7 +848,7 @@ buffer_allocate()
 }
 /*---------------------------------------------------------------------------*/
 static void
-icmp_output()
+icmp_output(void)
 {
   struct sequence_list_header *sl;
   uint8_t *buffer;
@@ -1098,7 +1144,7 @@ accept(uint8_t in)
 /*---------------------------------------------------------------------------*/
 /* ROLL TM ICMPv6 Input Handler */
 static void
-icmp_input()
+icmp_input(void)
 {
   uint8_t inconsistency;
   uint16_t *seq_ptr;
@@ -1321,7 +1367,7 @@ drop:
 }
 /*---------------------------------------------------------------------------*/
 static void
-out()
+out(void)
 {
 
   if(uip_len + HBHO_TOTAL_LEN > UIP_BUFSIZE) {
@@ -1391,7 +1437,7 @@ drop:
 }
 /*---------------------------------------------------------------------------*/
 static uint8_t
-in()
+in(void)
 {
   /*
    * We call accept() which will sort out caching and forwarding. Depending
